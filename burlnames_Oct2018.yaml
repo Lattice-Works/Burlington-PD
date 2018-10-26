@@ -1,0 +1,458 @@
+entityDefinitions:
+  people:
+    fqn: general.person
+    entitySetName: "BurlingtonPeople"
+    propertyDefinitions:
+      nc.SubjectIdentification:
+        type:  "nc.SubjectIdentification"
+        column: "SSN"                
+      nc.PersonBirthDate:
+        type: "nc.PersonBirthDate"
+        column: "DOB"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ["00000000"]
+          goal: [""]
+        - !<transforms.DateTransform>
+          pattern: ["yyyyMMdd"]
+      nc.PersonSurName:
+        type: "nc.PersonSurName"
+        column: "LastName"
+      nc.PersonGivenName:
+        type: "nc.PersonGivenName"
+        column: "FirstName"
+      nc.PersonMiddleName:
+        type: "nc.PersonMiddleName"
+        column: "MiddleName"
+      nc.PersonSuffix:
+        type: "nc.PersonSuffix"
+        transforms:
+        - !<transforms.BooleanRegexTransform>
+          column: "NameQual"
+          pattern: "(IV|II|III|SR|3RD|JR|JR.)i\\s*"
+          transformsIfTrue:
+          - !<transforms.ColumnTransform>
+            column: "NameQual"
+      nc.PersonSex:
+        type: "nc.PersonSex"
+        column: "Sex"
+        transforms:
+          - !<transforms.ReplaceTransform>
+            target: ['M', 'F', 'U']
+            goal: ['M', 'F', '']
+      nc.PersonRace:
+        type: "nc.PersonRace"
+        column: "Race"
+        transforms: 
+        - !<transforms.ReplaceTransform>
+          target: ["A", "W", "B", "I", "U", "P"]
+          goal: ["asian", "white", "black", "amindian", "", "pacisland"]
+      nc.PersonEthnicity:
+        type: "nc.PersonEthnicity"
+        column: "Ethnicity"
+        transforms: 
+        - !<transforms.ReplaceTransform>
+          target: ["H", "N", "U"]
+          goal: ["hispanic", "nonhispanic", ""]
+      person.stateidnumber:
+        type: "person.stateidnumber"
+        column: "StateID"
+    name: "people"
+    currentSync: true
+
+  persondetails:
+    fqn: "ol.persondetails"
+    entitySetName: "BurlingtonPersonDetails"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "SSN"
+      nc.PersonHeightMeasure:
+        type: "nc.PersonHeightMeasure"
+        column: "Height"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ["'", "-", "/", " "]
+          goal: ["", "", "", ""]
+        - !<transforms.ParseIntTransform> {}
+      nc.PersonWeightMeasure:
+        type: "nc.PersonWeightMeasure"
+        column: "Weight"
+        transforms:
+        - !<transforms.ParseIntTransform> {}
+      ol.title:
+        type: "ol.title"
+        transforms:
+        - !<transforms.BooleanRegexTransform>
+          column: "NameQual"
+          pattern: "(DR|DR.|MRS|MS|MS.|M|M.D.|SGT|SARG)\\s*"
+          transformsIfTrue:
+          - !<transforms.ColumnTransform>
+            column: "NameQual"
+      ol.eyecolor:
+        type: "ol.eyecolor"
+        column: "Eyes"
+      ol.haircolor:
+        type: "ol.haircolor"
+        column: "Hair"
+      nc.complexion:
+        type: "nc.complexion"
+        column: "Complexion"
+      ol.stateresident:
+        type: "ol.stateresident"
+        column: "ResidentStatus"
+      person.veteranstatus:
+        type: "person.veteranstatus"
+        column: 'MilitaryActiveDutyYN'
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ["Y", "N"]
+          goal: ["Y Military Active", "N Military Active"]
+      ol.bodydescription:
+        type: "ol.bodydescription"
+        column: "Body"
+      ol.language:
+        type: "ol.language"
+        column: "Speech"
+      ol.ears:
+        type: "ol.ears"
+        column: "Ears"
+      ol.face:
+        type: "ol.face"
+        column: "Face"
+      ol.nose:
+        type: "ol.nose"
+        column: "Nose"
+      ol.facialhair:
+        type: "ol.facialhair"
+        column: "FacialHair"
+      ol.glasses:
+        type: "ol.glasses"
+        column: "Glasses"
+      ol.handedness:
+        type: "ol.handedness"
+        column: "Handed"
+      ol.nationality:
+        type: "ol.nationality"
+        column: "ForeignNationalYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ["Y", "N"]
+          goal: ["non-US", "US"]
+    name: "persondetails"
+    currentSync: true
+
+  persondetailscj:
+    fqn: "ol.persondetailscriminaljustice"
+    entitySetName: "BurlingtonPersonDetailsCJ"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "SSN"
+      criminaljustice.cautioninformation:
+        type: "criminaljustice.cautioninformation"
+        column: "CautionYN"
+      ol.sexoffender:
+        type: "ol.sexoffender"
+        column: "SexOffenderYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ['Y', 'N']
+          goal: [1,0]
+      ol.photographs:
+        type: "ol.photographs"
+        column: "PhotographsYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ['Y', 'N']
+          goal: [1,0]
+      ol.fingerprints:
+        type: "ol.fingerprints"
+        column: "FingerPrintsYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ['Y', 'N']
+          goal: [1,0]
+      medical.suicidalideation:
+        type: "medical.suicidalideation"
+        column: "SuicidalYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ['Y', 'N']
+          goal: [1,0]
+      ol.probationnumber:
+        type: "ol.probationnumber"
+        column: "ProbationControlNumb"
+    name: "persondetailscj"
+    currentSync: true
+
+  personaddress:
+    fqn: "ol.location"
+    entitySetName: "BurlingtonAddresses"
+    propertyDefinitions:
+      general.id:
+        type: "general.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['StreetPreDir', 'StreetNum','StreetName', 'StreetSuf', 'StreetPostDir', 'StreetApt', 'City', 'State', 'Zip']
+          separator: "_"
+      location.street:
+        type: "location.street"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['StreetPreDir', 'StreetNum','StreetName', 'StreetSuf', 'StreetPostDir']
+          separator: " "
+      location.addressline2:
+        type: "location.addressline2"
+        column: "StreetApt"
+      location.city:
+        type: "location.city"
+        column: "City"
+      location.state:
+        type: "location.state"
+        column: "State"
+      location.zip:
+        type: "location.zip"
+        column: "Zip"
+      general.notes:
+        type: "general.notes"
+        column: "Jur"
+    name: "personaddress"
+    currentSync: true
+
+  license:
+    fqn: "ol.identification"
+    entitySetName: "BurlingtonLicenses"
+    propertyDefinitions: 
+      ol.id:
+        type: "ol.id"
+        column: "LicenseNum"
+      location.state:
+        type: "location.state"
+        column: "LicenseState"
+    name: "license"
+
+  contactinfo:
+    fqn: "ol.contactinformation"
+    entitySetName: "BurlingtonContactInfo"
+    propertyDefinitions:
+      general.id:
+        type: "general.id"
+        column: "HomeTel"
+      contact.phonenumber:
+        type: "contact.phonenumber"
+        column: "HomeTel"
+    name: "contactinfo"
+
+  fbinumber:
+    fqn: "ol.identification"
+    entitySetName: "BurlingtonFBINumbers"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "FBINum"
+      ol.type:
+        type: "ol.type"
+        transforms:
+        - !<transforms.ValueTransform>
+          value: "FBI Number"
+    conditions:
+    - !<conditions.ConditionalOr> {}
+    - !<conditions.BooleanIsNullCondition>
+      column: "FBINum"
+      reverse: true
+    - !<conditions.BooleanRegexCondition>
+      column: "FBINum"
+      pattern: "\\s+"
+    name: "fbinumber"
+
+  incident:
+    fqn: "ol.incident"
+    entitySetName: "BurlingtonIncidents"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "CaseNum"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ['-OF', 'A-OF', 'B-OF', '-AR', 'A-AR', 'B-AR', 'C-AR', '-AC']
+          goal: ['','','','','','','','']
+      criminaljustice.casenumber:
+        type: "criminaljustice.casenumber"
+        column: "CaseNum"
+      ol.datetime_reported:
+        type: "ol.datetime_reported"
+        column: "CaseDate"
+        transforms:
+        - !<transforms.DateAsDateTimeTransform>
+          pattern: ["yyyyMMdd"]
+    name: "incident"
+    currentSync: true
+
+  cad:
+    fqn: "ol.policecad"
+    entitySetName: "BurlingtonCad"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "CaseNum"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ['-OF', 'A-OF', 'B-OF', '-AR', 'A-AR', 'B-AR', 'C-AR', '-AC']
+          goal: ['','','','','','','','']
+      criminaljustice.reportnumber:
+        type: "criminaljustice.reportnumber"
+        column: "CaseNum"
+      ol.datetime_reported:
+        type: "ol.datetime_reported"
+        column: "CaseDate"
+        transforms:
+        - !<transforms.DateAsDateTimeTransform>
+          pattern: ["yyyyMMdd"]
+    name: "cad"
+    currentSync: true
+
+
+
+#################### ASSOCIATIONS
+associationDefinitions:
+  has1:
+    fqn: "ol.has"
+    entitySetName: "BurlingtonHas"
+    src: "people"
+    dst: "persondetails"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "SSN"
+      general.entryupdated:
+        type: "general.entryupdated"
+        transforms:
+        - !<transforms.CombineDateTimeTransform>
+          dateColumn: "ModifiedDate"
+          datePattern: ["yyyyMMdd"]
+          timeColumn: "ModifiedTime"
+          timePattern: ["HHmm"]
+    name: "has1"
+    currentSync: true
+
+  has2:
+    fqn: "ol.has"
+    entitySetName: "BurlingtonHas"
+    src: "people"
+    dst: "persondetailscj"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "SSN"
+      general.datetime:
+        type: "general.entryupdated"
+        transforms:
+        - !<transforms.CombineDateTimeTransform>
+          dateColumn: "ModifiedDate"
+          datePattern: ["yyyyMMdd"]
+          timeColumn: "ModifiedTime"
+          timePattern: ["HHmm"]
+    name: "has2"
+    currentSync: true
+
+  has3:
+    fqn: "ol.has"
+    entitySetName: "BurlingtonHas"
+    src: "people"
+    dst: "license"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['SSN', 'LicenseNum']
+          separator: ""
+      general.datetime:
+        type: "general.entryupdated"
+        transforms:
+        - !<transforms.CombineDateTimeTransform>
+          dateColumn: "ModifiedDate"
+          datePattern: ["yyyyMMdd"]
+          timeColumn: "ModifiedTime"
+          timePattern: ["HHmm"]
+    name: "has3"
+
+  has4:
+    fqn: "ol.has"
+    entitySetName: "BurlingtonHas"
+    src: "people"
+    dst: "fbinumber"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['SSN', 'FBINum']
+          separator: ""
+      general.datetime:
+        type: "general.entryupdated"
+        transforms:
+        - !<transforms.CombineDateTimeTransform>
+          dateColumn: "ModifiedDate"
+          datePattern: ["yyyyMMdd"]
+          timeColumn: "ModifiedTime"
+          timePattern: ["HHmm"]
+    name: "has4"
+
+  locatedat:
+    fqn: "ol.locatedat"
+    entitySetName: "BurlingtonLocatedAt"
+    src: "people"
+    dst: "personaddress"
+    propertyDefinitions:
+      general.id:
+        type: "general.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['SSN', StreetPreDir', StreetNum','StreetName', 'StreetSuf', 'StreetPostDir', 'StreetApt', 'City', 'State', 'Zip']
+          separator: ""
+    name: "locatedat"
+
+  contactedvia:
+    fqn: "ol.contactedvia"
+    entitySetName: "BurlingtonContactedVia"
+    src: "people"
+    dst: "contactinfo"
+    propertyDefinitions:
+      general.id:
+        type: "general.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['SSN', 'HomeTel']
+          separator: ""
+    name: "contactedvia"
+
+  involvedin:
+    fqn: "ol.involvedin"
+    entitySetName: "BurlingtonInvolvedIn"
+    src: "people"
+    dst: "incident"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['SSN', 'CaseNum']
+          separator: "_"
+    name: "involvedin"
+
+  resultsin:
+    fqn: "ol.relatedto"
+    entitySetName: "BurlingtonRelatedTo"
+    src: "cad"
+    dst: "incident"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "CaseNum"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ['-OF', 'A-OF', 'B-OF', '-AR', 'A-AR', 'B-AR', 'C-AR', '-AC']
+          goal: ['','','','','','','','']
+    currentSync: true

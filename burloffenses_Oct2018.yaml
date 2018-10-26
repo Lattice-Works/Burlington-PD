@@ -1,0 +1,349 @@
+entityDefinitions:
+  cad:
+    fqn: "ol.policecad"
+    entitySetName: "BurlingtonCad"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "CallNum"
+      criminaljustice.reportnumber:
+          type: "criminaljustice.reportnumber"
+          column: "Number"
+      ol.datetime_reported:
+        type: "ol.datetime_reported"
+        column: "ReptDate"
+        transforms:
+        - !<transforms.DateAsDateTimeTransform>
+          pattern: ['M/d/yyyy']
+      ol.datetimestart:
+        type: "ol.datetimestart"
+        transforms:
+        - !<transforms.CombineDateTimeTransform>
+          dateColumn: "OccurredFromDate"
+          datePattern: ["yyyyMMdd"]
+          timeColumn: "OccurredFromTime"
+          timePattern: ["HHmm", "Hmm"]
+      ol.datetimeend:
+        type: "ol.datetimeend"
+        transforms:
+        - !<transforms.CombineDateTimeTransform>
+          dateColumn: "OccurredToDate"
+          datePattern: ["yyyyMMdd"]
+          timeColumn: "OccurredToTime"
+          timePattern: ["HHmm", "Hmm"]
+      ol.description: 
+        type: "ol.description"
+        column: "Desc"
+      ol.sexcrime:
+        type: "ol.sexcrime"
+        column: "SexCrimesYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ["Y", "N"]
+          goal: [true,false]
+    name: "cad"
+    currentSync: true
+
+  incident:                       
+    fqn: "ol.incident"
+    entitySetName: "BurlingtonIncidents"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "CallNum"
+      criminaljustice.reportnumber:
+        type: "criminaljustice.reportnumber"
+        column: "Number"
+      ol.datetime_reported:
+        type: "ol.datetime_reported"
+        column: "ReptDate"
+        transforms:
+        - !<transforms.DateAsDateTimeTransform>
+          pattern: ['M/d/yyyy']
+      ol.description:
+        type: "ol.description"
+        column: "Desc"
+      ol.datetimestart:
+        type: "ol.datetimestart"
+        transforms:
+        - !<transforms.CombineDateTimeTransform>
+          dateColumn: "OccurredFromDate"
+          datePattern: ["yyyyMMdd"]
+          timeColumn: "OccurredFromTime"
+          timePattern: ["HHmm", "Hmm"]
+      ol.datetimeend:
+        type: "ol.datetimeend"
+        transforms:
+        - !<transforms.CombineDateTimeTransform>
+          dateColumn: "OccurredToDate"
+          datePattern: ["yyyyMMdd"]
+          timeColumn: "OccurredToTime"
+          timePattern: ["HHmm", "Hmm"]
+      ol.datetimestart:
+        type: "ol.datetimestart"
+        column: "IncidentDate"
+        transforms:
+        - !<transforms.DateAsDateTimeTransform>
+          pattern: ['yyyyMMdd']
+      ol.juveniles:
+        type: "ol.juveniles"
+        column: "JuvenilesYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ["Y", "N"]
+          goal: [true,false]
+      ol.gangactivity:
+        type: "ol.gangactivity"
+        column: "GangRelatedYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ["Y", "N"]
+          goal: [true,false]
+      ol.status:
+        type: "ol.status"
+        column: "Status"
+    conditions:
+    - !<conditions.BooleanIsNullCondition>
+      column: "FieldNum"
+      reverse: false
+    name: "incident"
+    currentSync: true
+
+  offense:
+    fqn: "ol.offense"
+    entitySetName: "BurlingtonOffenses"
+    propertyDefinitions: 
+      ol.id:
+        type: "ol.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['Chapter', 'Section', 'AttemptedCompleted', 'Desc']
+          separator: "_"
+      criminaljustice.nibrs:
+        type: "criminaljustice.nibrs"
+        column: "IBRCode"
+      ol.statepenalchapter:
+        type: "ol.statepenalchapter"
+        column: "Chapter"
+      ol.statepenalsection:
+        type: "ol.statepenalsection"
+        column: "Section"
+      ol.level:
+        type: "ol.level"
+        column: "FelonyMisdemeanor"
+      ol.description:
+        type: "ol.description"
+        column: "IBRDescription"
+      ol.domesticviolenceflag:
+        type: "ol.domesticviolenceflag"
+        column: "DomesticYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ["Y", "N"]
+          goal: [true,false]
+      ol.sexcrime:
+        type: "ol.sexcrime"
+        column: "SexCrimesYN"
+        transforms:
+        - !<transforms.ReplaceTransform>
+          target: ["Y", "N"]
+          goal: [true,false]
+      ol.attemptedcompleted:
+        type: "ol.attemptedcompleted"
+        column: "AttemptedCompleted"
+    name: "offense"
+    currentSync: true
+
+  arrest:
+    fqn: "ol.arrest"
+    entitySetName: "BurlingtonArrests"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "ArrestNum"
+      ol.arrestdatetime:
+        type: "ol.arrestdatetime"
+        column: "ArrestDate"
+        transforms:
+        - !<transforms.DateAsDateTimeTransform>
+          pattern: ['yyyyMMdd']
+      ol.warrantnumber:
+        type: "ol.warrantnumber"
+        column: "WarrantNum"
+      ol.datetimeend:
+        type: "ol.datetime_reported"
+        transforms:
+        - !<transforms.CombineDateTimeTransform>
+          dateColumn: "ReportDate"
+          datePattern: ["yyyyMMdd"]
+          timeColumn: "ReportTime"
+          timePattern: ["HHmm", "Hmm"]
+      ol.category:
+        type: "ol.category"
+        column: "TypeOfArrest"
+    name: "arrest"
+    currentSync: true
+
+  offenseaddress:
+    fqn: "ol.location"
+    entitySetName: "BurlingtonAddresses"
+    propertyDefinitions:
+      general.id:
+        type: "general.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ["Address", "Location"]
+          separator: "_"
+      location.name:
+        type: "location.name"
+        column: "Location"
+      location.street: 
+        type: "location.street"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['StreetNum', 'StreetName', 'StreetSuf']
+          separator: " "
+      location.addressline2: 
+        type: "location.addressline2"
+        column: "StreetApt"
+      location.city:
+        type: "location.city"
+        column: "City"
+      location.zip:
+        type: "location.zip"
+        column: "Zone"
+      ol.type:
+        type: "ol.type"
+        column: "LocationType"
+    name: "offenseaddress"
+    currentSync: true
+
+  weapon:
+    fqn: "ol.weapon"
+    entitySetName: "BurlingtonWeapons"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['WeaponForce1', 'WeaponForce2', 'WeaponForce3']
+          separator: ";"
+      ol.type1:
+        type: "ol.type"
+        column: "WeaponForce1"
+      ol.type2:
+        type: "ol.type"
+        column: "WeaponForce2"
+      ol.type3:
+        type: "ol.type"
+        column: "WeaponForce3"
+    name: "weapon"
+    currentSync: true
+
+#################### ASSOCIATIONS
+associationDefinitions:
+  resultsin:
+    fqn: "ol.resultsin"
+    entitySetName: "BurlingtonRelatedTo"
+    src: "cad"
+    dst: "incident"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "CallNum"
+    currentSync: true
+
+  leadsto:
+    fqn: "justice.leadsto"
+    entitySetName: "BurlingtonLeadsTo"
+    src: "cad"
+    dst: "arrest"
+    propertyDefinitions:
+      general.stringid:
+        type: "general.stringid"
+        column: "CallNum"
+    name: "leadsto"
+    currentSync: true
+
+  locatedat1:
+    fqn: "ol.locatedat"
+    entitySetName: "BurlingtonLocatedAt"
+    src: "cad"
+    dst: "offenseaddress"
+    propertyDefinitions:
+      general.id:
+        type: "general.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['CallNum', 'Address', 'Location']
+    currentSync: true
+
+  locatedat2:
+    fqn: "ol.locatedat"
+    entitySetName: "BurlingtonLocatedAt"
+    src: "incident"
+    dst: "offenseaddress"
+    propertyDefinitions:
+      general.id:
+        type: "general.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['CallNum', 'Address', 'Location']
+    currentSync: true
+
+  relatedto2:
+    fqn: "ol.relatedto"
+    entitySetName: "BurlingtonRelatedTo"
+    src: "arrest"
+    dst: "incident"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "CallNum"
+    currentSync: true
+
+  relatedto3:
+    fqn: "ol.relatedto"
+    entitySetName: "BurlingtonRelatedTo"
+    src: "offense"
+    dst: "incident"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        column: "IncidentNum"
+    currentSync: true
+
+  involvedin:
+    fqn: "ol.involvedin"
+    entitySetName: "BurlingtonInvolvedIn"
+    src: "weapon"
+    dst: "incident"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['WeaponForce1', 'WeaponForce2', 'WeaponForce3', 'CallNum']
+    currentSync: true
+
+  associatedwith:
+    fqn: "ol.associatedwith"
+    entitySetName: "BurlingtonAssociatedWith"
+    src: "arrest"
+    dst: "offense"
+    propertyDefinitions:
+      ol.id:
+        type: "ol.id"
+        transforms:
+        - !<transforms.ConcatTransform>
+          columns: ['Chapter', 'Section', 'AttemptedCompleted', 'Desc', 'ArrestNum']
+          separator: "_"
+    currentSync: true
+
+
+
+
+
+
+
+
