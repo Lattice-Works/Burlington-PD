@@ -115,7 +115,7 @@ entityDefinitions:
     name: "officerpeople"
 
   officerdetails:
-    fqn: "o.employee"
+    fqn: "ol.employee"
     entitySetName: "BurlingtonOfficerDetails"
     propertyDefinitions:
       ol.id:
